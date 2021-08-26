@@ -1,0 +1,47 @@
+.TH RGIT 1 rgit\-0.1.0
+.SH NAME
+rgit \- Remote GIT
+.SH SYNOPSIS
+.B rgit <repo>
+.SH DESCRIPTION
+.B rgit 
+is a remote git utility to create a bare repository on a remote server.
+.B rgit
+will login to the remote server using ssh as 
+.B user@domain
+and initialise a empty "bare" repository. 
+.B git
+will create the necessary subdirectories / parent directories required on its own.
+.B rgit
+will also set the remote to
+.B $REMOTE_ORIGIN
+or "server" to the ssh url of the git repo.
+.SH USAGE
+.TP
+.B rgit test/test.git
+Create a new repo in the remote server. 
+.SH CONFIGURATION
+.SS
+.B ~/.config/rgit.conf
+Configuration file for rgit. This file will be sourced by 
+.B rgit
+every time its invoked. The following configuration variables are required:
+.TP
+.B DOMAIN
+Domain to connect to. Ex: example.com
+.TP
+.B USER
+Git user on remote server. Ex: git
+.TP
+.B GIT_DIR
+Root directory to create the git repositories in. Ex: /git
+.PP
+Example configuration file:
+
+DOMAIN=example.com
+
+USER=git
+
+GIT_DIR=/git
+.SH AUTHORS
+DevHyperCoder <devan@devhypercoder.com>

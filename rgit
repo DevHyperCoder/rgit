@@ -1,0 +1,36 @@
+#!/bin/sh
+
+# rgit is a Remote GIT utility to create a repo (bare repo) in a remote git
+# server.
+# 
+# For documentation check rgit.1
+
+fail () { echo "$1" 1>&2 exit 1; }
+
+# Source configuration file. Configuration file contains environment variable
+# declaration.  Check manual page for more information. 
+. "$HOME/.config/rgit.conf" >/dev/null || fail "No config file found."
+
+REPO="$1"
+
+# Exit if $DOMAIN / $GIT_DIR / $REPO is not set.
+[ -n "${DOMAIN+1}" ] || fail "\$DOMAIN is not set" [ -n "${GIT_DIR+1}" ] ||
+  fail "\$GIT_DIR is not set" [ -n "${REPO+1}" ] || fail "\$REPO is not set"
+
+# Set remote origin to env var / "server"
+REMOTE_ORGIN=${REMOTE_ORGIN:-"server"}
+
+# Construct repo location (on remote server) and repo url (for push / pull
+# [ssh])
+REPO_LOC="$GIT_DIR/$REPO" REPO_URL="$USER@$DOMAIN:$GIT_DIR/$REPO"
+
+# Command to execute on remote server
+CMD="mkdir -p $REPO_LOC && git init --bare $REPO_LOC"
+
+printf "\n\nCreating repository in remote server.\n\n"
+
+# Time to ssh in to server and run command.  If ssh login succeeded, set remote
+# `$REMOTE_ORGIN` to $REPO_URL
+ssh "$USER@$DOMAIN" "$CMD" && echo "Setting remote \"$REMOTE_ORGIN\" to
+\"$REPO_URL\"" && git remote add "$REMOTE_ORGIN" "$REPO_URL"
+
